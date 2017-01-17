@@ -32,5 +32,19 @@ This mounts Edison's /home/root at local ~/edroot.   The “-o reconnect” opti
 Add the line to /etc/fstab to establish connection on boot. 
 
 
+Task: Read Sensor Data with Edison
 
+      Photocell
+      Temperature
+      Distance sensor (UT)
+      Accelerometer/vibration sensor combo
+      
 Task: Store and Process Incoming Data
+
+Data is stored on edisoni and edisoni's home directory is mounted on server and workstation using sshfs.
+
+     Use RRD-tool to store database
+     Use RRD-cgi to make charts
+     Use Apache web server to display latest charts
+     https://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html
+
