@@ -24,21 +24,21 @@ Note that ssh-copy-id function is not available from Edison. In general sshfs is
 	sshfs <edison's@ip_address:path> ,<server or workstation local path> 
 In our case, the commmand from workstation and server is: 
 	sshfs root@192.168.1.20:/home/root/ edroot -o reconnect -C -o  workaround=all
-This mounts Edison's /home/root at local ~/edroot.  Add the line to /etc/fstab  to establish connection on boot. The “-o reconnect”  option directs sshfs to reconnect if the connection to the Edison is lost. Terminal windows accessing the mounted directories freeze when the Edison is powered off (recovery possible with fusermount -u edroot or kill <ssh PID(s)>). The  ssh configuration files were changed by adding the following to /etc/ssh/ssh_config:
+This mounts Edison's /home/root at local ~/edroot. The “-o reconnect”  option directs sshfs to reconnect if the connection to the Edison is lost. Terminal windows accessing the mounted directories freeze when the Edison is powered off (recovery possible with fusermount -u edroot or kill <ssh PID(s)>). The  ssh configuration files were changed by adding the following to /etc/ssh/ssh_config:
 
 	ServerAliveInterval 15
 	ServerAliveCountMax 3
 
 Task: Read Sensor Data with Edison
 
-      Photocell
+      Photocell: Photocell uses an analog input.  The sensor is installed with a resistor (min 10K Ohm) in series. Using the mraa library with python, the sensor voltage is accessed with: "photocell = mraa.Aio(0)" for analog I/O 0.  Average of 10 readings spaced at 0.2 seconds was used for one measurement.
       Temperature
       Distance sensor (UT)
       Accelerometer/vibration sensor combo
       
 Task: Store and Process Incoming Data
 
-     Use RRD-tool to store database
+     Use RRD-tool to store database: Install rrdpython libraries, and include their location in the Path.  RRD database is created and then updated by a script called by crontab at a time interval.  
      Use RRD-cgi to make charts
      Use Apache web server to display latest charts
      Guidance here: https://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html
