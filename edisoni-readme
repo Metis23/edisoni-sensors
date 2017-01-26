@@ -11,8 +11,6 @@ and viewing data using the following components:
 
 Task: Flash Edison and Connect to Wireless Network (per Intel)
 
-Task: Writing Data to and from Edison
-
 Task: Read Sensor Data with Edison
 
       Photocell: Photocell provides analog input.  The sensor is installed 
@@ -31,8 +29,8 @@ Task: Store and Process Incoming Data
 
      Use RRD-tool to store database: Install rrdpython libraries, and include 
      their location in the Path.  RRD database is created with datasource, step,
-     and AVERAGE specification.  The databse is updated by a script called by 
-     a cron job every 5 minutes.
+     and AVERAGE specifications.  The databse is updated by a script that is 
+     called by a cron job every 5 minutes.
      Translate RRD file: Edison-generated RRD file is not compatible with 
      64 bit server architecture.  Use "rrdtool dump photocell.rrd photocell.xml" 
      to generate transferable xml file.  
@@ -43,5 +41,5 @@ Task: Store and Process Incoming Data
      "rrdool restore photocell.xml ~/photocell.rrd 
      Use RRD-cgi to make charts in real time when called from web page.
   
-     Guidance here: https://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html
+     RRD guidance found here: https://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html
 
