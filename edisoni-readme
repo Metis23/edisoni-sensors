@@ -13,33 +13,35 @@ Task: Flash Edison and Connect to Wireless Network (per Intel)
 
 Task: Writing Data to and from Edison
 
-Inconveniently, Edison's kernel does not support samba shares. Instead of samba, the ssh file system function (sshfs) is used to mount directories from Edison onto other computers:
-
-Install sshfs on the workstation and server:
-	apt-get install sshfs
-Keys are generated in the workstation and the server and shared with the Edison (root@192.168.1.20 in this example) using the ssh key copying function: 
-	ssh-keygen -t rsa
-	ssh-copy-id -i id_rsa.pub root@192.168.1.20
-Note that ssh-copy-id function is not available from Edison. In general sshfs is used to mount some or all of the Edison's file system in this way: 
-	sshfs <edison's@ip_address:path> ,<server or workstation local path> 
-In our case, the commmand from workstation and server is: 
-	sshfs root@192.168.1.20:/home/root/ edroot -o reconnect -C -o  workaround=all
-This mounts Edison's /home/root at local ~/edroot. The “-o reconnect”  option directs sshfs to reconnect if the connection to the Edison is lost. Terminal windows accessing the mounted directories freeze when the Edison is powered off (recovery possible with fusermount -u edroot or kill <ssh PID(s)>). The  ssh configuration files were changed by adding the following to /etc/ssh/ssh_config:
-
-	ServerAliveInterval 15
-	ServerAliveCountMax 3
-
 Task: Read Sensor Data with Edison
 
-      Photocell: Photocell uses an analog input.  The sensor is installed with a resistor (min 10K Ohm) in series. Using the mraa library with python, the sensor voltage is accessed with: "photocell = mraa.Aio(0)" for analog I/O 0.  Average of 10 readings spaced at 0.2 seconds was used for one measurement.
-      Temperature
-      Distance sensor (UT)
-      Accelerometer/vibration sensor combo
+      Photocell: Photocell provides analog input.  The sensor is installed 
+      with a resistor (min 10K Ohm) in series. Using the mraa library with 
+      python, the sensor voltage is accessed with: "photocell = mraa.Aio(0)" 
+      for analog I/O 0.  Average of 5 readings spaced at 0.2 seconds was 
+      used for one measurement.
+      Temperature:
+      Relative humidity:
+      Distance sensor (UT):
+      Accelerometer/vibration sensor combo: Determine if edison sample rate 
+      is fast enough to generate useful waveforms from these sensors.  will
+      RRDtool be useful for this data?
       
 Task: Store and Process Incoming Data
 
-     Use RRD-tool to store database: Install rrdpython libraries, and include their location in the Path.  RRD database is created and then updated by a script called by crontab at a time interval.  
-     Use RRD-cgi to make charts
-     Use Apache web server to display latest charts
+     Use RRD-tool to store database: Install rrdpython libraries, and include 
+     their location in the Path.  RRD database is created with datasource, step,
+     and AVERAGE specification.  The databse is updated by a script called by 
+     a cron job every 5 minutes.
+     Translate RRD file: Edison-generated RRD file is not compatible with 
+     64 bit server architecture.  Use "rrdtool dump photocell.rrd photocell.xml" 
+     to generate transferable xml file.  
+     SCP the xml file from the Edison to the server - excute scp on the server
+     because the edison cannot generate ssh keys, but can receive them from 
+     server.
+     Restore the database on the server using 
+     "rrdool restore photocell.xml ~/photocell.rrd 
+     Use RRD-cgi to make charts in real time when called from web page.
+  
      Guidance here: https://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html
 
