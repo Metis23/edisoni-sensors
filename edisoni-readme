@@ -3,34 +3,25 @@ This document describes a general method of electronic sensing, recording,
 and viewing data using the following components:
 
 1. Sensors
-2. Intel Edison microcomputer
-3. Local wireless network
-4. Server: files, web, database
-5. Workstation computer 
-6. Software
+2. Intel Edison microprocessor with Arduino break-out board
+3. Server: file server, web server
+4. Software: Linux, rrd tools, python, mraa libraries, ...
 
-Task: Flash Edison and Connect to Wireless Network (per Intel)
+Task: Read Analog Sensor Data with Edison
 
-Task: Read Sensor Data with Edison
-
-      Photocell: Photocell provides analog input.  The sensor is installed 
-      with a resistor (min 10K Ohm) in series. Using the mraa library with 
-      python, the sensor voltage is accessed with: "photocell = mraa.Aio(0)" 
-      for analog I/O 0.  Average of 5 readings spaced at 0.2 seconds was 
-      used for one measurement.
-      Temperature:
-      Relative humidity:
-      Distance sensor (UT):
-      Accelerometer/vibration sensor combo: Determine if edison sample rate 
-      is fast enough to generate useful waveforms from these sensors.  will
-      RRDtool be useful for this data?
-      
+      Analog sensors are directly connected to the Edison on the "ANALOG IN" 
+      pins A0 through A5.  The voltage at these pins is accessible 
+      in Python script using the mraa libraries.  For example, to store the 
+      voltage at analog pin 0 in a usre-defined variable named "photocell," one can 
+      write: 
+      "photocell = mraa.Aio(0)" 
+            
 Task: Store and Process Incoming Data
 
-     Use RRD-tool to store database: Install rrdpython libraries, and include 
-     their location in the Path.  RRD database is created with datasource, step,
-     and AVERAGE specifications.  The databse is updated by a script that is 
-     called by a cron job every 5 minutes.
+     Create RRD file: Install rrdpython libraries, and include their location in the Path.  
+     Create a Round Robin Database (RRD) using rrdtools. Sensor readings can be
+     writen to the database using the rrdtools update function.  Linux cron tool
+     can be used to run a script at a time interval. 
      Translate RRD file: Edison-generated RRD file is not compatible with 
      64 bit server architecture.  Use "rrdtool dump photocell.rrd photocell.xml" 
      to generate transferable xml file.  
@@ -39,7 +30,17 @@ Task: Store and Process Incoming Data
      server.
      Restore the database on the server using 
      "rrdool restore photocell.xml ~/photocell.rrd 
-     Use RRD-cgi to make charts in real time when called from web page.
+     Use rrd-cgi to make charts in real time when the cgi scripts are called from web page.
   
      RRD guidance found here: https://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html
+     
+Sensor Types:
+      Light intensity:
+      Temperature:
+      Relative humidity:
+      Distance sensor (UT, IR):
+      Pressure (Air, water, hydraulic fluid)
+      Accelerometer/vibration sensors: Determine if edison sample rate 
+      is fast enough to generate useful waveforms from these sensors.  will
+      RRDtool be useful for this data?
 
